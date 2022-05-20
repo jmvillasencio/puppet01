@@ -1,0 +1,7 @@
+[main]
+    vardir=/var/lib/puppet
+    factpath=$confdir/facter
+    logdir = /var/log/puppet
+    rundir = /var/run/puppet
+    ssldir = /var/lib/puppet/ssl
+
