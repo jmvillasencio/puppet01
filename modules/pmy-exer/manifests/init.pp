@@ -1,30 +1,29 @@
-class pmy-exer {
-	
+class pmy-exer{
+
 	#install packages
 	$installPack = [ 'vim-enhanced' , 'curl' , 'git' ]
 
 	package { $installPack: ensure => 'installed', }
 
+	
 	#create user
-	user { 'monitor':
+	user ( 'monitor':
 		ensure => 'present',
 		home => '/home/monitor',
-		shell => '/bin/bash'.
-		before => Package[$installPack],
-	}		
+		shell => '/bin/bash',
+		before => Package[$installPackage],
+	}
+
 
 	#create directory
 	$directories = [ '/home/monitor' , '/home/monitor/scripts' ]
 
 	file { $directories:
-		ensure => 'directory',,
+		ensure > 'directory',
 		owner => 'root',
 		group => 'root',
 		mode => '0750',
 		before => User['monitor'],
 	}
 
-
 }
-
-	
