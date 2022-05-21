@@ -5,21 +5,27 @@ class pmy-exer{
 
 	package { $installPack: ensure => 'installed', }
 
-	
 	#create user
-	user ( 'monitor':
+	user { 'monitor':
 		ensure => 'present',
 		home => '/home/monitor',
 		shell => '/bin/bash',
-		before => Package[$installPackage],
+		managehome => true,
+		before => Package[$installPack],
 	}
 
-
 	#create directory
-	$directories = [ '/home/monitor' , '/home/monitor/scripts' ]
+	#file { '/home/monitor/scripts':
+	#	ensure => 'directory',
+	#	owner => 'monitor',
+	#	group => 'root',
+	#	mode => '0755',
+	#	before => User['monitor'],
+	#}
 
-	file { $directories:
-		ensure > 'directory',
+	$directories = [ '/home/monitor' , '/home/monitor/scripts' ]	
+	file { $directories: 
+		ensure => 'directory',
 		owner => 'root',
 		group => 'root',
 		mode => '0750',
