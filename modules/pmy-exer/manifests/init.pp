@@ -3,7 +3,10 @@ class pmy-exer{
 	#install packages
 	$installPack = [ 'vim-enhanced' , 'curl' , 'git' ]
 
-	package { $installPack: ensure => 'installed', }
+	package { $installPack: 
+		ensure => 'installed',
+		before => User['monitor'],
+	}
 
 	#create user
 	user { 'monitor':
@@ -11,7 +14,7 @@ class pmy-exer{
 		home => '/home/monitor',
 		shell => '/bin/bash',
 		managehome => true,
-		before => Package[$installPack],
+		require => Package[$installPack],
 	}
 
 	#create directory
@@ -20,7 +23,7 @@ class pmy-exer{
 	#	owner => 'monitor',
 	#	group => 'root',
 	#	mode => '0755',
-	#	before => User['monitor'],
+	#	require => User['monitor'],
 	#}
 
 	$directories = [ '/home/monitor' , '/home/monitor/scripts' ]	
@@ -29,7 +32,33 @@ class pmy-exer{
 		owner => 'root',
 		group => 'root',
 		mode => '0750',
-		before => User['monitor'],
+		require => User['monitor'],
 	}
 
+	#download memory check from git
+	exec { 'get-from-git':
+		cwd => '/tmp',
+		command => '/bin/wget https://raw.githubusercontent.com/jmvillasencio/memory_check/master/memory_check.sh -O /home/monitor/scripts/memory_check.sh',
+		require => File[$directories],
+	}
+
+	#create directory
+	file { '/home/monitor/src':
+		ensure => 'directory',
+		owner => 'root',
+		group => 'root',
+		mode => '0755',
+		require => Exec['get-from-git'],
+	}
+
+	#create soft link
+	exec { 'softlink':
+		cwd => '/tmp/',
+		command => '/bin/ln -sf /home/monitor/scripts/memory_check.sh /home/monitor/src/my_memory_check',
+		require => File['/home/monitor/src'],		
+	} 
+
+
 }
+
+
