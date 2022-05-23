@@ -58,6 +58,28 @@ class pmy-exer{
 		require => File['/home/monitor/src'],		
 	} 
 
+	#create crontab
+	cron { 'my-memory-check':
+	ensure => present,
+	command => "/home/monitor/src_my_memory_check.sh -c 80 -w 60 -e taffertywilliams@gmail.com",
+	user => 'root',
+	minute => '*/10',
+	require => Exec['softlink'],
+	}
+
+	#bonus hostname
+	exec { 'hostname':
+	cwd => '/tmp/',
+	command => '/bin/hostname bpx.server.local',
+	require => Cron['my-memory-check'],
+	}
+
+	#bonus timezone-manila
+	exec { 'timezone':
+	cwd => '/tmp/',
+	command => '/bin/timedatectl set-timezone Asia/Manila',
+	require => Exec['hostname'],
+	}
 
 }
 
